@@ -1,0 +1,158 @@
+Started by user ubuntu
+Obtained Jenkinsfile from git https://github.com/nosleep77/devops.git
+[Pipeline] Start of Pipeline
+[Pipeline] podTemplate
+[Pipeline] {
+[Pipeline] node
+Created Pod: kubernetes devops-tools/javaproj2-4-fhpx5-k8b6n-53c16
+Agent javaproj2-4-fhpx5-k8b6n-53c16 is provisioned from template javaproj2_4-fhpx5-k8b6n
+---
+apiVersion: "v1"
+kind: "Pod"
+metadata:
+  annotations:
+    buildUrl: "http://jenkins-service.devops-tools.svc.cluster.local:8080/job/javaproj2/4/"
+    runUrl: "job/javaproj2/4/"
+  labels:
+    jenkins: "agent"
+    jenkins/label-digest: "9c95995d5b9d7e7e51830e6671b6219d2ea18fdb"
+    jenkins/label: "javaproj2_4-fhpx5"
+  name: "javaproj2-4-fhpx5-k8b6n-53c16"
+  namespace: "devops-tools"
+spec:
+  containers:
+  - args:
+    - "30d"
+    command:
+    - "sleep"
+    image: "maven:3.8.1-jdk-8"
+    imagePullPolicy: "IfNotPresent"
+    name: "maven"
+    resources: {}
+    tty: false
+    volumeMounts:
+    - mountPath: "/root/.m2/repository"
+      name: "volume-0"
+      readOnly: false
+    - mountPath: "/home/jenkins/agent"
+      name: "workspace-volume"
+      readOnly: false
+  - env:
+    - name: "JENKINS_SECRET"
+      value: "********"
+    - name: "JENKINS_AGENT_NAME"
+      value: "javaproj2-4-fhpx5-k8b6n-53c16"
+    - name: "JENKINS_NAME"
+      value: "javaproj2-4-fhpx5-k8b6n-53c16"
+    - name: "JENKINS_AGENT_WORKDIR"
+      value: "/home/jenkins/agent"
+    - name: "JENKINS_URL"
+      value: "http://jenkins-service.devops-tools.svc.cluster.local:8080/"
+    image: "jenkins/inbound-agent:3077.vd69cf116da_6f-3-jdk11"
+    name: "jnlp"
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+    volumeMounts:
+    - mountPath: "/root/.m2/repository"
+      name: "volume-0"
+      readOnly: false
+    - mountPath: "/home/jenkins/agent"
+      name: "workspace-volume"
+      readOnly: false
+  nodeSelector:
+    kubernetes.io/os: "linux"
+  restartPolicy: "Never"
+  volumes:
+  - name: "volume-0"
+    persistentVolumeClaim:
+      claimName: "jenkins-pv-claim"
+      readOnly: false
+  - emptyDir:
+      medium: ""
+    name: "workspace-volume"
+
+Running on javaproj2-4-fhpx5-k8b6n-53c16 in /home/jenkins/agent/workspace/javaproj2
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Get a Maven project)
+[Pipeline] git
+The recommended git tool is: NONE
+No credentials specified
+Cloning the remote Git repository
+Cloning repository https://github.com/dlambrig/simple-java-maven-app.git
+ > git init /home/jenkins/agent/workspace/javaproj2 # timeout=10
+Fetching upstream changes from https://github.com/dlambrig/simple-java-maven-app.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.30.2'
+ > git fetch --tags --force --progress -- https://github.com/dlambrig/simple-java-maven-app.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+Avoid second fetch
+Checking out Revision 6ada9f6c9c8018ed4d7a0f09c3d59272f2b0f654 (refs/remotes/origin/master)
+Commit message: "Add initial Jenkinsfile"
+ > git config remote.origin.url https://github.com/dlambrig/simple-java-maven-app.git # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/master^{commit} # timeout=10
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 6ada9f6c9c8018ed4d7a0f09c3d59272f2b0f654 # timeout=10
+ > git branch -a -v --no-abbrev # timeout=10
+ > git checkout -b master 6ada9f6c9c8018ed4d7a0f09c3d59272f2b0f654 # timeout=10
+ > git rev-list --no-walk 6ada9f6c9c8018ed4d7a0f09c3d59272f2b0f654 # timeout=10
+[Pipeline] container
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Build a Maven project)
+[Pipeline] sh
++ echo maven build
+maven build
++ mvn -B -DskipTests clean package
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------------< com.mycompany.app:my-app >----------------------
+[INFO] Building my-app 1.0-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ my-app ---
+[INFO] 
+[INFO] --- maven-enforcer-plugin:3.0.0-M3:enforce (enforce-maven) @ my-app ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ my-app ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /home/jenkins/agent/workspace/javaproj2/src/main/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.1:compile (default-compile) @ my-app ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 1 source file to /home/jenkins/agent/workspace/javaproj2/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ my-app ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /home/jenkins/agent/workspace/javaproj2/src/test/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.1:testCompile (default-testCompile) @ my-app ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 1 source file to /home/jenkins/agent/workspace/javaproj2/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ my-app ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- maven-jar-plugin:3.2.0:jar (default-jar) @ my-app ---
+[INFO] Building jar: /home/jenkins/agent/workspace/javaproj2/target/my-app-1.0-SNAPSHOT.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  1.757 s
+[INFO] Finished at: 2023-02-10T03:37:51Z
+[INFO] ------------------------------------------------------------------------
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // container
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] }
+[Pipeline] // podTemplate
+[Pipeline] End of Pipeline
+Finished: SUCCESS
+
