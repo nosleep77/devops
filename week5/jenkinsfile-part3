@@ -48,7 +48,6 @@ podTemplate(
                 stage('Jacoco Checkstyle') {
                   try {
                         sh '''
-                          mkdir -p Chapter08/sample1/build/reports/tests/checkstyle
                           pwd
                           cd Chapter08/sample1
                           ./gradlew checkstyleMain
