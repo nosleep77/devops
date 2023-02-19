@@ -51,7 +51,6 @@ podTemplate(
                           pwd
                           cd Chapter08/sample1
                           ./gradlew checkstyleMain
-                          ./gradlew jacocoTestReport
                           '''
                   } catch (Exception E) {
                         echo 'Failure detected'
