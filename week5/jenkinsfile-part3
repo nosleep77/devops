@@ -55,13 +55,11 @@ podTemplate(
                   } catch (Exception E) {
                         echo 'Failure detected'
                     }
-                    // from the HTML publisher plugin
-                    // https://www.jenkins.io/doc/pipeline/steps/htmlpublisher/
                     publishHTML(target: [
-                      reportDir: 'Chapter08/sample1/build/reports/tests/test',
-                      reportFiles: 'checkstyle.html',
-                      reportName: 'JaCoCo Checkstyle'
-                      ])
+                     reportDir: 'Chapter08/sample1/build/reports/checkstyle',
+                     reportFiles: 'main.html',
+                     reportName: "Jacoco Checkstyle"
+                    ])
                 }
 
 
