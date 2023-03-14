@@ -32,7 +32,7 @@ node(POD_LABEL) {
 	./kubectl apply -f hazelcast.yaml
 	./kubectl apply -f calculator.yaml
 
-	./kubectl get pods --v=8 -n jenkins
+	./kubectl get pods -n jenkins
 
 	'''
 
