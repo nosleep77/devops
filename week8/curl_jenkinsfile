@@ -1,0 +1,50 @@
+
+podTemplate(yaml: '''
+  apiVersion: v1
+  kind: Pod
+  spec:
+    containers:
+    - name: centos
+      image: centos
+      command:
+      - sleep
+      args:
+      - 99d
+    restartPolicy: Never
+''') {
+
+node(POD_LABEL) {
+  stage('k8s') {
+    git 'https://github.com/nosleep77/cd-docker-jenkins'
+
+    container('centos') {
+      stage('start calculator') {
+
+        sh '''
+	cd Chapter08/sample1
+        TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+	curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+	chmod +x ./kubectl
+	ls -lh calculator.yaml
+	ls -lh hazelcast.yaml
+
+curl --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
+     -H "Authorization: Bearer $TOKEN" \
+https://kubernetes.default.svc.cluster.loca/apis/apps/v1/namespaces/default/deployments \
+-XPOST -H "Content-type: application/yaml" --data-binary @calculator.yaml
+
+curl --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
+     -H "Authorization: Bearer $TOKEN" \
+https://$KUBERNETES_SERVICE_HOST:$KUBERNETE_SERVICE_PORT/apis/apps/v1/namespaces/jenkins/deployments \
+-XPOST -H "Content-type: application/yaml" --data-binary @hazelcast.yaml
+
+	kubectl get pods --v=8 -n jenkins
+
+	'''
+
+      }
+     }
+   }
+
+}
+}
