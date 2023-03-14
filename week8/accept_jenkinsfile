@@ -4,8 +4,8 @@ podTemplate(yaml: '''
   kind: Pod
   spec:
     containers:
-    - name: centos
-      image: centos
+    - name: gradle
+      image: gradle:jdk8
       command:
       - sleep
       args:
@@ -14,11 +14,11 @@ podTemplate(yaml: '''
 ''') {
 
 node(POD_LABEL) {
-  stage('k8s') {
+  stage('gradle') {
     git 'https://github.com/nosleep77/cd-docker-jenkins'
 
-    container('centos') {
-      stage('start calculator') {
+    container('gradle') {
+      stage('test calculator') {
 
         sh '''
 	cd Chapter09/sample3
