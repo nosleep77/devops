@@ -89,7 +89,7 @@ node(POD_LABEL) {
 	curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
         chmod +x ./kubectl
 
-	kubectl set image deployment/calculator-deployment calculator=johnt035/divcalc:1.0 -n jenkins
+	./kubectl set image deployment/calculator-deployment calculator=johnt035/divcalc:1.0 -n jenkins
 
         '''
         }
