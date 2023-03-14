@@ -34,6 +34,8 @@ node(POD_LABEL) {
 
 	./kubectl get pods -n jenkins
 
+	curl -i calculator-service:8080/sum?a=3\&b=3
+
 	'''
 
       }
