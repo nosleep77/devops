@@ -30,7 +30,7 @@ node(POD_LABEL) {
 
 curl --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
      -H "Authorization: Bearer $TOKEN" \
-https://kubernetes.default.svc.cluster.loca/apis/apps/v1/namespaces/default/deployments \
+https://$KUBERNETES_SERVICE_HOST:$KUBERNETE_SERVICE_PORT/apis/apps/v1/namespaces/default/deployments \
 -XPOST -H "Content-type: application/yaml" --data-binary @calculator.yaml
 
 curl --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
