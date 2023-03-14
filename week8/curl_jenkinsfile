@@ -28,6 +28,8 @@ node(POD_LABEL) {
 	ls -lh calculator.yaml
 	ls -lh hazelcast.yaml
 
+	./kubectl get pods -o wide
+
 curl --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
      -H "Authorization: Bearer $TOKEN" \
 https://$KUBERNETES_SERVICE_HOST:$KUBERNETE_SERVICE_PORT/apis/apps/v1/namespaces/jenkins/deployments \
@@ -38,7 +40,7 @@ curl --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
 https://$KUBERNETES_SERVICE_HOST:$KUBERNETE_SERVICE_PORT/apis/apps/v1/namespaces/jenkins/deployments \
 -XPOST -H "Content-type: application/yaml" --data-binary @hazelcast.yaml
 
-	kubectl get pods --v=8 -n jenkins
+	./kubectl get pods --v=8 -n jenkins
 
 	'''
 
