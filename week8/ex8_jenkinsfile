@@ -88,11 +88,11 @@ node(POD_LABEL) {
 	curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
         chmod +x ./kubectl
 
-//////// deploy hazelcast and calculator
+	## deploy hazelcast and calculator 
         ./kubectl apply -f hazelcast.yaml
         ./kubectl apply -f calculator.yaml
 
-/////// use dlambrig/week8:1.1 image as suggested
+	## use dlambrig/week8:1.1 as suggested
 	./kubectl set image deployment/calculator-deployment calculator=dlambrig/week8:1.1 -n jenkins
 
         '''
