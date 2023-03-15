@@ -1,0 +1,42 @@
+
+podTemplate(yaml: '''
+  apiVersion: v1
+  kind: Pod
+  spec:
+    containers:
+    - name: gradle
+      image: gradle:jdk8
+      command:
+      - sleep
+      args:
+      - 99d
+    restartPolicy: Never
+''') {
+
+node(POD_LABEL) {
+  stage('gradle') {
+    git 'https://github.com/nosleep77/devops.git'
+
+    container('gradle') {
+      stage('test calculator') {
+
+        sh '''
+	cd $WORKSPACE/week8/Chapter09/sample3
+	curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+	chmod +x ./kubectl
+        chmod +x ./gradlew
+
+	./kubectl get pods -n jenkins
+
+	curl -i calculator-service:8080/sum?a=3\\&b=3
+
+        ./gradlew acceptanceTest -Dcalculator.url=http://calculator-service:8080
+
+	'''
+
+      }
+     }
+   }
+
+}
+}
