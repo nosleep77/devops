@@ -36,7 +36,7 @@ node(POD_LABEL) {
 
 
          publishHTML(target: [
-           reportDir: 'week8/Chapter09/sample3/build/reports/tests/acceptanceTest',
+           reportDir: '$WORKSPACE/week8/Chapter09/sample3/build/reports/tests/acceptanceTest',
            reportFiles: 'index.html',
            reportName: 'Acceptance Test Report'
            ])
