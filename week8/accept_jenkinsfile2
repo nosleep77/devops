@@ -15,7 +15,7 @@ podTemplate(yaml: '''
 
 node(POD_LABEL) {
   stage('gradle') {
-    git 'https://github.com/nosleep77/devops'
+    git 'https://github.com/nosleep77/week8'
 
     container('gradle') {
       stage('test calculator') {
