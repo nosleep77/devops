@@ -43,27 +43,24 @@ podTemplate(yaml: '''
 node(POD_LABEL) {
 
   stage('gradle build and tests') {
-    git 'https://github.com/dlambrig/Continuous-Delivery-with-Docker-and-Jenkins-Second-Edition'
+    git 'https://github.com/nosleep77/cd-docker-jenkins'
 
     container('gradle') {
 
-
+    // build the calculator jar with divide command
     stage('build gradle project') {
 
         sh '''
-        cd Chapter09/sample1
+        cd $WORKSPACE/Chapter09/sample1
         chmod +x gradlew
         ./gradlew build
         mv ./build/libs/calculator-0.0.1-SNAPSHOT.jar /mnt
         '''
     }
-
-
-
-     }
    }
+  }
 
-
+  // build the container image
   stage('build and push container image') {
     container('kaniko') {
 
@@ -86,13 +83,22 @@ node(POD_LABEL) {
 
     stage('update image') {
 	sh '''
+        cd $WORKSPACE/Chapter08/sample1
+
 	curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
         chmod +x ./kubectl
 
-	./kubectl set image deployment/calculator-deployment calculator=johnt035/divcalc:3 -n jenkins
+	// deploy hazelcast and calculator to kubernetes
+        ./kubectl apply -f hazelcast.yaml
+        ./kubectl apply -f calculator.yaml
+
+	// use dlambrig/week8:1.1 image as suggested
+	./kubectl set image deployment/calculator-deployment calculator=dlambrig/week8:1.1 -n jenkins
 
         '''
         }
+
+
     stage('test calc div') {
 	sh '''
 
