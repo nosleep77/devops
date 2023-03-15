@@ -102,9 +102,11 @@ node(POD_LABEL) {
     stage('test calc div') {
 	sh '''
 
-	curl -i -s calculator-service:8080/sum?a=6\\&b=2
-	curl -i -s calculator-service:8080/div?a=6\\&b=2
-	curl -i -s calculator-service:8080/div?a=6\\&b=0
+	test $(curl calculator-service:8080/sum?a=6\\&b=2) -eq 3 && echo 'pass' || 'fail'
+
+	curl calculator-service:8080/sum?a=6\\&b=2
+	curl calculator-service:8080/div?a=6\\&b=2
+	curl calculator-service:8080/div?a=6\\&b=0
 
 	'''
 
