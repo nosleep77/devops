@@ -1,0 +1,261 @@
+Started by user ubuntu
+Obtained week8/ex8_jenkinsfile from git https://github.com/nosleep77/devops.git
+[Pipeline] Start of Pipeline
+[Pipeline] podTemplate
+[Pipeline] {
+[Pipeline] node
+Created Pod: kubernetes jenkins/wk8-42-3bbqw-f9mgj-rqdm2
+Agent wk8-42-3bbqw-f9mgj-rqdm2 is provisioned from template wk8_42-3bbqw-f9mgj
+---
+apiVersion: "v1"
+kind: "Pod"
+metadata:
+  annotations:
+    buildUrl: "http://jenkins-service.jenkins.svc.cluster.local:8080/job/wk8/42/"
+    runUrl: "job/wk8/42/"
+  labels:
+    jenkins: "agent"
+    jenkins/label-digest: "56ad85340a1161083f0134dd708190982aa32325"
+    jenkins/label: "wk8_42-3bbqw"
+  name: "wk8-42-3bbqw-f9mgj-rqdm2"
+  namespace: "jenkins"
+spec:
+  containers:
+  - args:
+    - "99d"
+    command:
+    - "sleep"
+    image: "gradle:jdk8"
+    name: "gradle"
+    volumeMounts:
+    - mountPath: "/mnt"
+      name: "shared-storage"
+    - mountPath: "/home/jenkins/agent"
+      name: "workspace-volume"
+      readOnly: false
+  - args:
+    - "9999999"
+    command:
+    - "sleep"
+    image: "gcr.io/kaniko-project/executor:debug"
+    name: "kaniko"
+    volumeMounts:
+    - mountPath: "/mnt"
+      name: "shared-storage"
+    - mountPath: "/kaniko/.docker"
+      name: "kaniko-secret"
+    - mountPath: "/home/jenkins/agent"
+      name: "workspace-volume"
+      readOnly: false
+  - env:
+    - name: "JENKINS_SECRET"
+      value: "********"
+    - name: "JENKINS_AGENT_NAME"
+      value: "wk8-42-3bbqw-f9mgj-rqdm2"
+    - name: "JENKINS_NAME"
+      value: "wk8-42-3bbqw-f9mgj-rqdm2"
+    - name: "JENKINS_AGENT_WORKDIR"
+      value: "/home/jenkins/agent"
+    - name: "JENKINS_URL"
+      value: "http://jenkins-service.jenkins.svc.cluster.local:8080/"
+    image: "jenkins/inbound-agent:3107.v665000b_51092-4"
+    name: "jnlp"
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+    volumeMounts:
+    - mountPath: "/home/jenkins/agent"
+      name: "workspace-volume"
+      readOnly: false
+  nodeSelector:
+    kubernetes.io/os: "linux"
+  restartPolicy: "Never"
+  volumes:
+  - name: "kaniko-secret"
+    secret:
+      items:
+      - key: ".dockerconfigjson"
+        path: "config.json"
+      secretName: "dockercred"
+  - emptyDir:
+      medium: ""
+    name: "workspace-volume"
+  - name: "shared-storage"
+    persistentVolumeClaim:
+      claimName: "week7-dind"
+
+Running on wk8-42-3bbqw-f9mgj-rqdm2 in /home/jenkins/agent/workspace/wk8
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (gradle build and tests)
+[Pipeline] git
+The recommended git tool is: NONE
+No credentials specified
+Cloning the remote Git repository
+Cloning repository https://github.com/nosleep77/cd-docker-jenkins
+ > git init /home/jenkins/agent/workspace/wk8 # timeout=10
+Fetching upstream changes from https://github.com/nosleep77/cd-docker-jenkins
+ > git --version # timeout=10
+ > git --version # 'git version 2.30.2'
+ > git fetch --tags --force --progress -- https://github.com/nosleep77/cd-docker-jenkins +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url https://github.com/nosleep77/cd-docker-jenkins # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+Avoid second fetch
+Checking out Revision 5b2e545affc7ab4cadb551b731f7ca68f8ee0e33 (refs/remotes/origin/master)
+Commit message: "Update Calculator.java"
+ > git rev-parse refs/remotes/origin/master^{commit} # timeout=10
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 5b2e545affc7ab4cadb551b731f7ca68f8ee0e33 # timeout=10
+ > git branch -a -v --no-abbrev # timeout=10
+ > git checkout -b master 5b2e545affc7ab4cadb551b731f7ca68f8ee0e33 # timeout=10
+ > git rev-list --no-walk 5b2e545affc7ab4cadb551b731f7ca68f8ee0e33 # timeout=10
+[Checks API] No suitable checks publisher found.
+[Pipeline] container
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (build gradle project)
+[Pipeline] sh
++ cd /home/jenkins/agent/workspace/wk8/Chapter09/sample1
++ chmod +x gradlew
++ ./gradlew build
+Downloading https://services.gradle.org/distributions/gradle-4.10.2-bin.zip
+..........................................................................
+
+Welcome to Gradle 4.10.2!
+
+Here are the highlights of this release:
+ - Incremental Java compilation by default
+ - Periodic Gradle caches cleanup
+ - Gradle Kotlin DSL 1.0-RC6
+ - Nested included builds
+ - SNAPSHOT plugin versions in the `plugins {}` block
+
+For more details see https://docs.gradle.org/4.10.2/release-notes.html
+
+Starting a Gradle Daemon (subsequent builds will be faster)
+> Task :compileJava
+> Task :processResources
+> Task :classes
+> Task :bootJar
+> Task :jar SKIPPED
+> Task :assemble
+> Task :checkstyleMain
+> Task :compileTestJava
+> Task :processTestResources
+> Task :testClasses
+> Task :checkstyleTest SKIPPED
+> Task :test
+> Task :check
+> Task :build
+
+BUILD SUCCESSFUL in 35s
+7 actionable tasks: 7 executed
++ mv ./build/libs/calculator-0.0.1-SNAPSHOT.jar /mnt
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // container
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (build and push container image)
+[Pipeline] container
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (build and upload container image)
+[Pipeline] sh
++ echo 'FROM openjdk:8-jre'
++ echo 'COPY ./calculator-0.0.1-SNAPSHOT.jar app.jar'
++ echo 'ENTRYPOINT ["java", "-jar", "app.jar"]'
++ mv /mnt/calculator-0.0.1-SNAPSHOT.jar .
++ pwd
++ /kaniko/executor --context /home/jenkins/agent/workspace/wk8 --destination johnt035/divcalc:3
+[36mINFO[0m[0000] Retrieving image manifest openjdk:8-jre      
+[36mINFO[0m[0000] Retrieving image openjdk:8-jre from registry index.docker.io 
+[36mINFO[0m[0001] Built cross stage deps: map[]                
+[36mINFO[0m[0001] Retrieving image manifest openjdk:8-jre      
+[36mINFO[0m[0001] Returning cached image manifest              
+[36mINFO[0m[0001] Executing 0 build triggers                   
+[36mINFO[0m[0001] Building stage 'openjdk:8-jre' [idx: '0', base-idx: '-1'] 
+[36mINFO[0m[0001] Unpacking rootfs as cmd COPY ./calculator-0.0.1-SNAPSHOT.jar app.jar requires it. 
+[36mINFO[0m[0007] COPY ./calculator-0.0.1-SNAPSHOT.jar app.jar 
+[36mINFO[0m[0007] Taking snapshot of files...                  
+[36mINFO[0m[0008] ENTRYPOINT ["java", "-jar", "app.jar"]       
+[36mINFO[0m[0008] Pushing image to johnt035/divcalc:3          
+[36mINFO[0m[0012] Pushed index.docker.io/johnt035/divcalc@sha256:ee2e45e08f5c5994b0b85ec6def3f322c84490ca085842ee2ab879cc9a6abb74 
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // container
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (deploy container image to k8s deployment)
+[Pipeline] container
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (update image)
+[Pipeline] sh
++ cd /home/jenkins/agent/workspace/wk8/Chapter08/sample1
++ curl -L -s https://dl.k8s.io/release/stable.txt
++ curl -LO https://dl.k8s.io/release/v1.26.2/bin/linux/amd64/kubectl
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100   138  100   138    0     0   1269      0 --:--:-- --:--:-- --:--:--  1277
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+ 51 45.8M   51 23.6M    0     0  20.1M      0  0:00:02  0:00:01  0:00:01 23.7M
+100 45.8M  100 45.8M    0     0  21.7M      0  0:00:02  0:00:02 --:--:-- 23.6M
++ chmod +x ./kubectl
++ ./kubectl apply -f hazelcast.yaml
+deployment.apps/hazelcast unchanged
+service/hazelcast unchanged
++ ./kubectl apply -f calculator.yaml
+deployment.apps/calculator-deployment unchanged
+service/calculator-service unchanged
++ ./kubectl set image deployment/calculator-deployment calculator=dlambrig/week8:1.1 -n jenkins
++ sleep 5
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (test calc div)
+[Pipeline] sh
++ curl -s calculator-service:8080/sum?a=6&b=2
++ test 8 -eq 8
++ echo pass
+pass
++ curl -s calculator-service:8080/sum?a=6&b=2
++ test 8 -eq 7
++ echo fail
+fail
++ curl -s calculator-service:8080/div?a=6&b=2
++ test 3 -eq 3
++ echo pass
+pass
++ curl -s calculator-service:8080/div?a=6&b=2
++ test 3 -eq 4
++ echo fail
+fail
++ curl -s calculator-service:8080/div?a=6&b=0
++ test Division by 0 -eq 3
+/home/jenkins/agent/workspace/wk8@tmp/durable-bdc003aa/script.sh: 12: test: Division: unexpected operator
++ echo fail
+fail
++ curl -s calculator-service:8080/div?a=6&b=0
+Division by 0
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // container
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] }
+[Pipeline] // podTemplate
+[Pipeline] End of Pipeline
+[Checks API] No suitable checks publisher found.
+Finished: SUCCESS
