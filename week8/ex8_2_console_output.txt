@@ -1,0 +1,170 @@
+Started by user ubuntu
+Obtained week8/ex8_2_jenkinsfile from git https://github.com/nosleep77/devops
+[Pipeline] Start of Pipeline
+[Pipeline] podTemplate
+[Pipeline] {
+[Pipeline] node
+Created Pod: kubernetes jenkins/wk8-78-2cqcl-ddg5t-gbc34
+Agent wk8-78-2cqcl-ddg5t-gbc34 is provisioned from template wk8_78-2cqcl-ddg5t
+---
+apiVersion: "v1"
+kind: "Pod"
+metadata:
+  annotations:
+    buildUrl: "http://jenkins-service.jenkins.svc.cluster.local:8080/job/wk8/78/"
+    runUrl: "job/wk8/78/"
+  labels:
+    jenkins: "agent"
+    jenkins/label-digest: "d9125ce502081049dba33441bd19e7352545ac1d"
+    jenkins/label: "wk8_78-2cqcl"
+  name: "wk8-78-2cqcl-ddg5t-gbc34"
+  namespace: "jenkins"
+spec:
+  containers:
+  - args:
+    - "99d"
+    command:
+    - "sleep"
+    image: "gradle:jdk8"
+    name: "gradle"
+    volumeMounts:
+    - mountPath: "/home/jenkins/agent"
+      name: "workspace-volume"
+      readOnly: false
+  - env:
+    - name: "JENKINS_SECRET"
+      value: "********"
+    - name: "JENKINS_AGENT_NAME"
+      value: "wk8-78-2cqcl-ddg5t-gbc34"
+    - name: "JENKINS_NAME"
+      value: "wk8-78-2cqcl-ddg5t-gbc34"
+    - name: "JENKINS_AGENT_WORKDIR"
+      value: "/home/jenkins/agent"
+    - name: "JENKINS_URL"
+      value: "http://jenkins-service.jenkins.svc.cluster.local:8080/"
+    image: "jenkins/inbound-agent:3107.v665000b_51092-4"
+    name: "jnlp"
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+    volumeMounts:
+    - mountPath: "/home/jenkins/agent"
+      name: "workspace-volume"
+      readOnly: false
+  nodeSelector:
+    kubernetes.io/os: "linux"
+  restartPolicy: "Never"
+  volumes:
+  - emptyDir:
+      medium: ""
+    name: "workspace-volume"
+
+Running on wk8-78-2cqcl-ddg5t-gbc34 in /home/jenkins/agent/workspace/wk8
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (gradle)
+[Pipeline] git
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+Cloning the remote Git repository
+Cloning repository https://github.com/nosleep77/devops
+ > git init /home/jenkins/agent/workspace/wk8 # timeout=10
+Fetching upstream changes from https://github.com/nosleep77/devops
+ > git --version # timeout=10
+ > git --version # 'git version 2.30.2'
+ > git fetch --tags --force --progress -- https://github.com/nosleep77/devops +refs/heads/*:refs/remotes/origin/* # timeout=10
+Avoid second fetch
+Checking out Revision 961559c434d538a331d16ae8c36feac7af2593b9 (refs/remotes/origin/main)
+Commit message: "project"
+ > git config remote.origin.url https://github.com/nosleep77/devops # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 961559c434d538a331d16ae8c36feac7af2593b9 # timeout=10
+ > git branch -a -v --no-abbrev # timeout=10
+ > git checkout -b main 961559c434d538a331d16ae8c36feac7af2593b9 # timeout=10
+ > git rev-list --no-walk 267e8caba33876277ffabb23644a807b193f7eae # timeout=10
+[Checks API] No suitable checks publisher found.
+[Pipeline] container
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (test calculator)
+[Pipeline] sh
++ cd /home/jenkins/agent/workspace/wk8/week8/Chapter09/sample3
++ curl -L -s https://dl.k8s.io/release/stable.txt
++ curl -LO https://dl.k8s.io/release/v1.26.2/bin/linux/amd64/kubectl
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100   138  100   138    0     0   1387      0 --:--:-- --:--:-- --:--:--  1393
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+ 91 45.8M   91 41.7M    0     0  34.9M      0  0:00:01  0:00:01 --:--:-- 42.0M
+100 45.8M  100 45.8M    0     0  35.5M      0  0:00:01  0:00:01 --:--:-- 42.1M
++ chmod +x ./kubectl
++ chmod +x ./gradlew
++ ./kubectl get pods -n jenkins
+NAME                                     READY   STATUS    RESTARTS       AGE
+calculator-deployment-77bcc56c77-wl7qc   1/1     Running   1 (178m ago)   7h11m
+hazelcast-7cd56f9f94-khgcn               1/1     Running   2 (178m ago)   28h
+centos                                   1/1     Running   4 (178m ago)   41h
+gradle-week8                             1/1     Running   3 (178m ago)   30h
+jenkins-77c8b9f4c4-tgqj9                 2/2     Running   32 (24m ago)   21d
+wk8-78-2cqcl-ddg5t-gbc34                 2/2     Running   0              10s
++ curl -i calculator-service:8080/sum?a=3&b=3
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100     1  100     1    0     0    142      0 --:--:-- --:--:-- --:--:--   166
+HTTP/1.1 200 
+Content-Type: text/plain;charset=UTF-8
+Content-Length: 1
+Date: Wed, 15 Mar 2023 21:57:02 GMT
+
+6+ ./gradlew acceptanceTest -Dcalculator.url=http://calculator-service:8080
+Downloading https://services.gradle.org/distributions/gradle-4.10.2-bin.zip
+..........................................................................
+
+Welcome to Gradle 4.10.2!
+
+Here are the highlights of this release:
+ - Incremental Java compilation by default
+ - Periodic Gradle caches cleanup
+ - Gradle Kotlin DSL 1.0-RC6
+ - Nested included builds
+ - SNAPSHOT plugin versions in the `plugins {}` block
+
+For more details see https://docs.gradle.org/4.10.2/release-notes.html
+
+Starting a Gradle Daemon (subsequent builds will be faster)
+> Task :compileJava
+> Task :processResources
+> Task :classes
+> Task :compileTestJava
+> Task :processTestResources
+> Task :testClasses
+> Task :acceptanceTest
+
+BUILD SUCCESSFUL in 33s
+5 actionable tasks: 5 executed
+[Pipeline] publishHTML
+[htmlpublisher] Archiving HTML reports...
+[htmlpublisher] Archiving at PROJECT level /home/jenkins/agent/workspace/wk8/week8/Chapter09/sample3/build/reports/tests/acceptanceTest to /var/jenkins_home/jobs/wk8/htmlreports/Acceptance_20Test_20Report
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // container
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] }
+[Pipeline] // podTemplate
+[Pipeline] End of Pipeline
+[Checks API] No suitable checks publisher found.
+Finished: SUCCESS
+
