@@ -88,7 +88,6 @@ node(POD_LABEL) {
 	curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
         chmod +x ./kubectl
 
-	// deploy hazelcast and calculator to kubernetes
         ./kubectl apply -f hazelcast.yaml
         ./kubectl apply -f calculator.yaml
 
