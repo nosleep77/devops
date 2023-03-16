@@ -51,7 +51,7 @@ node(POD_LABEL) {
     stage('build gradle project') {
 
         sh '''
-        cd $WORKSPACE/Chapter09/sample1
+        cd $WORKSPACE/Chapter09/sample3
         chmod +x gradlew
         ./gradlew build
         mv ./build/libs/calculator-0.0.1-SNAPSHOT.jar /mnt
@@ -70,7 +70,7 @@ node(POD_LABEL) {
         echo 'COPY ./calculator-0.0.1-SNAPSHOT.jar app.jar' >> Dockerfile
         echo 'ENTRYPOINT ["java", "-jar", "app.jar"]' >> Dockerfile
         mv /mnt/calculator-0.0.1-SNAPSHOT.jar .
-        /kaniko/executor --context `pwd` --destination johnt035/divcalc:3
+        /kaniko/executor --context `pwd` --destination johnt035/divcalc:4
         '''
         }
 
