@@ -105,14 +105,14 @@ node(POD_LABEL) {
 
 	## sum
 	test $(curl -s calculator-service:8080/sum?a=6\\&b=2) -eq 8 && echo 'pass' || 'fail'
-	test $(curl -s calculator-service:8080/sum?a=6\\&b=2) -eq 7 && echo 'pass' || echo 'fail'
+	test $(curl -s calculator-service:8080/sum?a=6\\&b=2) -eq 7 && echo 'pass' || 'fail'
 
 	## division
-	test $(curl -s calculator-service:8080/div?a=6\\&b=2) -eq 3 && echo 'pass' || echo 'fail'
-	test $(curl -s calculator-service:8080/div?a=6\\&b=2) -eq 4 && echo 'pass' || echo 'fail'
+	test $(curl -s calculator-service:8080/div?a=6\\&b=2) -eq 3 && echo 'pass' || 'fail'
+	test $(curl -s calculator-service:8080/div?a=6\\&b=2) -eq 4 && echo 'pass' || 'fail'
 
 	## division by zero
-	test $(curl -s calculator-service:8080/div?a=6\\&b=0) -eq 3 && echo 'pass' || echo 'fail'
+	test $(curl -s calculator-service:8080/div?a=6\\&b=0) -eq 3 && echo 'pass' || 'fail'
 
 	#curl calculator-service:8080/sum?a=6\\&b=2
 	#curl calculator-service:8080/div?a=6\\&b=2
