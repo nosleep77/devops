@@ -53,7 +53,7 @@ node(POD_LABEL) {
         ./kubectl apply -f hazelcast.yaml -n staging
         ./kubectl apply -f calculator.yaml -n staging
 
-	sleep 20
+	sleep 15
 
 	## check pods
 	./kubectl get pods -n staging
@@ -89,7 +89,7 @@ node(POD_LABEL) {
         ## update image to dlambrig/week8:1.1
         echo 'update image to dlambrig/week8:1.1 which has sum and div'
         ./kubectl set image deployment/calculator-deployment calculator=dlambrig/week8:1.1 -n staging
-        sleep 30
+        sleep 15
 
         echo 'sum test'
         test $(curl -s calculator-service.staging.svc.cluster.local:8080/sum?a=6\\&b=2) -eq 8 && echo 'pass' || echo 'fail'
