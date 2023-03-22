@@ -31,10 +31,10 @@ podTemplate(yaml: '''
 node(POD_LABEL) {
 
 
-  stage('deploy container image to k8s deployment') {
+  stage('update yamls and check pods') {
     container('gradle') {
 
-    stage('update image') {
+    stage('update yamls') {
 	git branch: 'main', url: 'https://github.com/nosleep77/devops'
 
 	sh '''
@@ -59,9 +59,10 @@ node(POD_LABEL) {
         }
 
 
-    stage('test calc div') {
+    stage('check calc image for div') {
 	sh '''
 
+	## update image to dlambrig/hello-kaniko:0.5
 	echo 'update image to dlambrig/hello-kaniko:0.5 which has sum but no div'
 	./kubectl set image deployment/calculator-deployment calculator=dlambrig/hello-kaniko:0.5 -n staging
 
