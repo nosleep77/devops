@@ -44,12 +44,14 @@ node(POD_LABEL) {
         chmod +x ./kubectl
 
 	## use set cluster and namespace
-	./kubectl config use-context default
-	./kubectl config set-context --current --namespace=staging
+	#./kubectl config use-context default
+	#./kubectl config set-context --current --namespace=staging
+	./kubectl config get-contexts  
+	./kubectl config current-context
 
 	## deploy hazelcast and calculator 
-        ./kubectl apply -f hazelcast.yaml
-        ./kubectl apply -f calculator.yaml
+        ./kubectl apply -f hazelcast.yaml -n staging
+        ./kubectl apply -f calculator.yaml -n staging
 
 	sleep 10
 
