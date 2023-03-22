@@ -43,7 +43,8 @@ node(POD_LABEL) {
 	curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
         chmod +x ./kubectl
 
-	## use staging namespace
+	## use set cluster and namespace
+	./kubectl config use-context default
 	./kubectl config set-context --current --namespace=staging
 
 	## deploy hazelcast and calculator 
