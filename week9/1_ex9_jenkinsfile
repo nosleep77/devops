@@ -53,7 +53,7 @@ node(POD_LABEL) {
         ./kubectl apply -f hazelcast.yaml -n staging
         ./kubectl apply -f calculator.yaml -n staging
 
-	sleep 10
+	sleep 20
 
 	## check pods
 	./kubectl get pods -n staging
@@ -64,6 +64,8 @@ node(POD_LABEL) {
 
     stage('check calc image for div') {
 	sh '''
+
+	cd $WORKSPACE/week9/
 
 	## update image to dlambrig/hello-kaniko:0.5
 	echo 'update image to dlambrig/hello-kaniko:0.5 which has sum but no div'
