@@ -1,0 +1,221 @@
+Started by an SCM change
+Obtained week9/1_ex9_jenkinsfile from git https://github.com/nosleep77/devops.git
+[Pipeline] Start of Pipeline
+[Pipeline] podTemplate
+[Pipeline] {
+[Pipeline] node
+Created Pod: kubernetes jenkins/wk9-part1-13-198hx-77kv1-hjrgn
+Agent wk9-part1-13-198hx-77kv1-hjrgn is provisioned from template wk9-part1_13-198hx-77kv1
+---
+apiVersion: "v1"
+kind: "Pod"
+metadata:
+  annotations:
+    buildUrl: "http://jenkins-service.jenkins.svc.cluster.local:8080/job/wk9-part1/13/"
+    runUrl: "job/wk9-part1/13/"
+  labels:
+    jenkins: "agent"
+    jenkins/label-digest: "9dd94c002e962e372d55cb82b0d2c0c39768c199"
+    jenkins/label: "wk9-part1_13-198hx"
+  name: "wk9-part1-13-198hx-77kv1-hjrgn"
+  namespace: "jenkins"
+spec:
+  containers:
+  - args:
+    - "99d"
+    command:
+    - "sleep"
+    image: "gradle:jdk8"
+    name: "gradle"
+    volumeMounts:
+    - mountPath: "/mnt"
+      name: "shared-storage"
+    - mountPath: "/home/jenkins/agent"
+      name: "workspace-volume"
+      readOnly: false
+  - env:
+    - name: "JENKINS_SECRET"
+      value: "********"
+    - name: "JENKINS_AGENT_NAME"
+      value: "wk9-part1-13-198hx-77kv1-hjrgn"
+    - name: "JENKINS_NAME"
+      value: "wk9-part1-13-198hx-77kv1-hjrgn"
+    - name: "JENKINS_AGENT_WORKDIR"
+      value: "/home/jenkins/agent"
+    - name: "JENKINS_URL"
+      value: "http://jenkins-service.jenkins.svc.cluster.local:8080/"
+    image: "jenkins/inbound-agent:3107.v665000b_51092-4"
+    name: "jnlp"
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+    volumeMounts:
+    - mountPath: "/home/jenkins/agent"
+      name: "workspace-volume"
+      readOnly: false
+  nodeSelector:
+    kubernetes.io/os: "linux"
+  restartPolicy: "Never"
+  volumes:
+  - name: "kaniko-secret"
+    secret:
+      items:
+      - key: ".dockerconfigjson"
+        path: "config.json"
+      secretName: "dockercred"
+  - emptyDir:
+      medium: ""
+    name: "workspace-volume"
+  - name: "shared-storage"
+    persistentVolumeClaim:
+      claimName: "week7-dind"
+
+Running on wk9-part1-13-198hx-77kv1-hjrgn in /home/jenkins/agent/workspace/wk9-part1
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (update yamls and check pods)
+[Pipeline] container
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (update yamls)
+[Pipeline] git
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+Warning: JENKINS-30600: special launcher org.csanchez.jenkins.plugins.kubernetes.pipeline.ContainerExecDecorator$1@6239d23d; decorates RemoteLauncher[hudson.remoting.Channel@7a9d0704:JNLP4-connect connection from 10.42.0.107/10.42.0.107:48828] will be ignored (a typical symptom is the Git executable not being run inside a designated container)
+Cloning the remote Git repository
+Cloning repository https://github.com/nosleep77/devops
+ > git init /home/jenkins/agent/workspace/wk9-part1 # timeout=10
+Fetching upstream changes from https://github.com/nosleep77/devops
+ > git --version # timeout=10
+ > git --version # 'git version 2.30.2'
+ > git fetch --tags --force --progress -- https://github.com/nosleep77/devops +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url https://github.com/nosleep77/devops # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+Avoid second fetch
+Checking out Revision 45639f5d738a5abe21e880d8dfe58d5d1aa77c30 (refs/remotes/origin/main)
+Commit message: "project"
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 45639f5d738a5abe21e880d8dfe58d5d1aa77c30 # timeout=10
+ > git branch -a -v --no-abbrev # timeout=10
+ > git checkout -b main 45639f5d738a5abe21e880d8dfe58d5d1aa77c30 # timeout=10
+ > git rev-list --no-walk 05090325fe50230c6d97c0ed1ace86d4f1f6ff96 # timeout=10
+[Checks API] No suitable checks publisher found.
+[Pipeline] sh
++ cd /home/jenkins/agent/workspace/wk9-part1/week9/
++ curl -L -s https://dl.k8s.io/release/stable.txt
++ curl -LO https://dl.k8s.io/release/v1.26.3/bin/linux/amd64/kubectl
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100   138  100   138    0     0   1327      0 --:--:-- --:--:-- --:--:--  1339
+
+ 14 45.8M   14 6976k    0     0  13.2M      0  0:00:03 --:--:--  0:00:03 13.2M
+100 45.8M  100 45.8M    0     0  36.4M      0  0:00:01  0:00:01 --:--:-- 52.3M
++ chmod +x ./kubectl
++ ./kubectl config get-contexts
+CURRENT   NAME   CLUSTER   AUTHINFO   NAMESPACE
++ ./kubectl apply -f hazelcast.yaml -n staging
+deployment.apps/hazelcast unchanged
+service/hazelcast unchanged
++ ./kubectl apply -f calculator.yaml -n staging
+deployment.apps/calculator-deployment configured
+service/calculator-service unchanged
++ sleep 15
++ ./kubectl get pods -n staging
+NAME                                     READY   STATUS    RESTARTS   AGE
+hazelcast-7cd56f9f94-k9kht               1/1     Running   0          47m
+calculator-deployment-54cc45699f-jjtm5   1/1     Running   0          22m
+calculator-deployment-54cc45699f-g4ld4   1/1     Running   0          15s
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (check calc image for div)
+[Pipeline] sh
++ cd /home/jenkins/agent/workspace/wk9-part1/week9/
++ echo update image to dlambrig/hello-kaniko:0.5 which has sum but no div
+update image to dlambrig/hello-kaniko:0.5 which has sum but no div
++ ./kubectl set image deployment/calculator-deployment calculator=dlambrig/hello-kaniko:0.5 -n staging
+deployment.apps/calculator-deployment image updated
++ sleep 15
++ echo sum test
+sum test
++ ./kubectl get svc
+NAME              TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)                          AGE
+jenkins-service   NodePort   10.43.83.228   <none>        8080:32001/TCP,50000:30495/TCP   28d
++ curl -s calculator-service.staging.svc.cluster.local:8080/sum?a=6&b=2
++ test 8 -eq 8
++ echo pass
+pass
++ curl -s calculator-service.staging.svc.cluster.local:8080/sum?a=6&b=2
++ test 8 -eq 7
++ echo fail
+fail
++ echo division test
+division test
++ curl -s calculator-service.staging.svc.cluster.local:8080/div?a=6&b=2
++ test {"timestamp":"2023-03-22T16:54:53.647+0000","status":404,"error":"Not Found","message":"No message available","path":"/div"} -eq 3
+/home/jenkins/agent/workspace/wk9-part1@tmp/durable-745e166e/script.sh: 16: test: {"timestamp":"2023-03-22T16:54:53.647+0000","status":404,"error":"Not: unexpected operator
++ echo fail
+fail
++ curl -s calculator-service.staging.svc.cluster.local:8080/div?a=6&b=2
++ test {"timestamp":"2023-03-22T16:54:53.707+0000","status":404,"error":"Not Found","message":"No message available","path":"/div"} -eq 4
+/home/jenkins/agent/workspace/wk9-part1@tmp/durable-745e166e/script.sh: 17: test: {"timestamp":"2023-03-22T16:54:53.707+0000","status":404,"error":"Not: unexpected operator
++ echo fail
+fail
++ echo division by zero test
+division by zero test
++ curl -s calculator-service.staging.svc.cluster.local:8080/div?a=6&b=0
++ test {"timestamp":"2023-03-22T16:54:53.721+0000","status":404,"error":"Not Found","message":"No message available","path":"/div"} -eq 3
+/home/jenkins/agent/workspace/wk9-part1@tmp/durable-745e166e/script.sh: 20: test: {"timestamp":"2023-03-22T16:54:53.721+0000","status":404,"error":"Not: unexpected operator
++ echo fail
+fail
++ echo update image to dlambrig/week8:1.1 which has sum and div
+update image to dlambrig/week8:1.1 which has sum and div
++ ./kubectl set image deployment/calculator-deployment calculator=dlambrig/week8:1.1 -n staging
+deployment.apps/calculator-deployment image updated
++ sleep 15
++ echo sum test
+sum test
++ curl -s calculator-service.staging.svc.cluster.local:8080/sum?a=6&b=2
++ test 8 -eq 8
++ echo pass
+pass
++ curl -s calculator-service.staging.svc.cluster.local:8080/sum?a=6&b=2
++ test 8 -eq 7
++ echo fail
+fail
++ echo division test
+division test
++ curl -s calculator-service.staging.svc.cluster.local:8080/div?a=6&b=2
++ test 3 -eq 3
++ echo pass
+pass
++ curl -s calculator-service.staging.svc.cluster.local:8080/div?a=6&b=2
++ test 3 -eq 4
++ echo fail
+fail
++ echo division by zero test
+division by zero test
++ curl -s calculator-service.staging.svc.cluster.local:8080/div?a=6&b=0
++ test Division by 0 -eq 3
+/home/jenkins/agent/workspace/wk9-part1@tmp/durable-745e166e/script.sh: 37: test: Division: unexpected operator
++ echo fail
+fail
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // container
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] }
+[Pipeline] // podTemplate
+[Pipeline] End of Pipeline
+[Checks API] No suitable checks publisher found.
+Finished: SUCCESS
+
