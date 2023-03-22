@@ -71,7 +71,7 @@ node(POD_LABEL) {
         ## update image to dlambrig/hello-kaniko:0.5
         echo 'update image to dlambrig/hello-kaniko:0.5 which has sum but no div'
         ./kubectl set image deployment/calculator-deployment calculator=dlambrig/hello-kaniko:0.5 -n staging
-        sleep 30
+        sleep 15
 
         echo 'sum test'
         ./kubectl get svc
@@ -86,8 +86,8 @@ node(POD_LABEL) {
         test $(curl -s calculator-service.staging.svc.cluster.local:8080/div?a=6\\&b=0) -eq 3 && echo 'pass' || echo 'fail'
 
 
-        ## update image to dlambrig/hello-kaniko:1.0
-        echo 'update image to dlambrig/hello-kaniko:1.0 which has sum and div'
+        ## update image to dlambrig/week8:1.1
+        echo 'update image to dlambrig/week8:1.1 which has sum and div'
         ./kubectl set image deployment/calculator-deployment calculator=dlambrig/week8:1.1 -n staging
         sleep 30
 
