@@ -47,7 +47,7 @@ node(POD_LABEL) {
 	#./kubectl config use-context default
 	#./kubectl config set-context --current --namespace=staging
 	./kubectl config get-contexts  
-	./kubectl config current-context
+	#./kubectl config current-context
 
 	## deploy hazelcast and calculator 
         ./kubectl apply -f hazelcast.yaml -n staging
