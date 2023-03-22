@@ -44,7 +44,7 @@ node(POD_LABEL) {
         chmod +x ./kubectl
 
 	## use staging namespace
-	kubectl config set-context --current --namespace=staging
+	./kubectl config set-context --current --namespace=staging
 
 	## deploy hazelcast and calculator 
         ./kubectl apply -f hazelcast.yaml
