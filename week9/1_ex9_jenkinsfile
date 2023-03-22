@@ -88,7 +88,7 @@ node(POD_LABEL) {
 
         ## update image to dlambrig/hello-kaniko:1.0
         echo 'update image to dlambrig/hello-kaniko:1.0 which has sum and div'
-        ./kubectl set image deployment/calculator-deployment calculator=dlambrig/hello-kaniko:1.0 -n staging
+        ./kubectl set image deployment/calculator-deployment calculator=dlambrig/week8:1.1 -n staging
         sleep 30
 
         echo 'sum test'
