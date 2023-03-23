@@ -1,0 +1,202 @@
+Started by user ubuntu
+Obtained week9/2_ex9_jenkinsfile from git https://github.com/nosleep77/devops
+[Pipeline] Start of Pipeline
+[Pipeline] podTemplate
+[Pipeline] {
+[Pipeline] node
+Created Pod: kubernetes jenkins/wk9-part2-2-5c9rv-c8d4q-j2m7q
+Agent wk9-part2-2-5c9rv-c8d4q-j2m7q is provisioned from template wk9-part2_2-5c9rv-c8d4q
+---
+apiVersion: "v1"
+kind: "Pod"
+metadata:
+  annotations:
+    buildUrl: "http://jenkins-service.jenkins.svc.cluster.local:8080/job/wk9-part2/2/"
+    runUrl: "job/wk9-part2/2/"
+  labels:
+    jenkins: "agent"
+    jenkins/label-digest: "cf79b71a41e636fe83cb69fbd8f5805ce9b937a0"
+    jenkins/label: "wk9-part2_2-5c9rv"
+  name: "wk9-part2-2-5c9rv-c8d4q-j2m7q"
+  namespace: "jenkins"
+spec:
+  containers:
+  - args:
+    - "99d"
+    command:
+    - "sleep"
+    image: "gradle:jdk8"
+    name: "gradle"
+    volumeMounts:
+    - mountPath: "/mnt"
+      name: "shared-storage"
+    - mountPath: "/home/jenkins/agent"
+      name: "workspace-volume"
+      readOnly: false
+  - args:
+    - "99d"
+    command:
+    - "sleep"
+    env:
+    - name: "GOOGLE_APPLICATION_CREDENTIALS"
+      value: "/var/secrets/google/umls24-109ffb3a5ab9.json"
+    image: "google/cloud-sdk"
+    name: "cloud-sdk"
+    volumeMounts:
+    - mountPath: "/mnt"
+      name: "shared-storage"
+    - mountPath: "/var/secrets/google"
+      name: "google-cloud-key"
+    - mountPath: "/home/jenkins/agent"
+      name: "workspace-volume"
+      readOnly: false
+  - env:
+    - name: "JENKINS_SECRET"
+      value: "********"
+    - name: "JENKINS_AGENT_NAME"
+      value: "wk9-part2-2-5c9rv-c8d4q-j2m7q"
+    - name: "JENKINS_NAME"
+      value: "wk9-part2-2-5c9rv-c8d4q-j2m7q"
+    - name: "JENKINS_AGENT_WORKDIR"
+      value: "/home/jenkins/agent"
+    - name: "JENKINS_URL"
+      value: "http://jenkins-service.jenkins.svc.cluster.local:8080/"
+    image: "jenkins/inbound-agent:3107.v665000b_51092-4"
+    name: "jnlp"
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+    volumeMounts:
+    - mountPath: "/home/jenkins/agent"
+      name: "workspace-volume"
+      readOnly: false
+  nodeSelector:
+    kubernetes.io/os: "linux"
+  restartPolicy: "Never"
+  volumes:
+  - name: "google-cloud-key"
+    secret:
+      secretName: "sdk-key"
+  - emptyDir:
+      medium: ""
+    name: "workspace-volume"
+  - name: "shared-storage"
+    persistentVolumeClaim:
+      claimName: "jenkins-pv-claim3"
+
+Running on wk9-part2-2-5c9rv-c8d4q-j2m7q in /home/jenkins/agent/workspace/wk9-part2
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (test staging and deploy to gke)
+[Pipeline] git
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+Cloning the remote Git repository
+Cloning repository https://github.com/nosleep77/devops
+ > git init /home/jenkins/agent/workspace/wk9-part2 # timeout=10
+Fetching upstream changes from https://github.com/nosleep77/devops
+ > git --version # timeout=10
+ > git --version # 'git version 2.30.2'
+ > git fetch --tags --force --progress -- https://github.com/nosleep77/devops +refs/heads/*:refs/remotes/origin/* # timeout=10
+Avoid second fetch
+Checking out Revision b817d0c6c126c846ac1124da551deff3b4f89c92 (refs/remotes/origin/main)
+Commit message: "project"
+ > git config remote.origin.url https://github.com/nosleep77/devops # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f b817d0c6c126c846ac1124da551deff3b4f89c92 # timeout=10
+ > git branch -a -v --no-abbrev # timeout=10
+ > git checkout -b main b817d0c6c126c846ac1124da551deff3b4f89c92 # timeout=10
+ > git rev-list --no-walk 7794e7c16175c58b5f66ae749f7813c8d0dd107a # timeout=10
+[Checks API] No suitable checks publisher found.
+[Pipeline] container
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (smoke test staging env)
+[Pipeline] sh
++ cd /home/jenkins/agent/workspace/wk9-part2/week8/Chapter09/sample3
++ chmod +x ./gradlew
++ ./gradlew smokeTest -Dcalculator.url=http://calculator-service.staging.svc.cluster.local:8080
+Downloading https://services.gradle.org/distributions/gradle-4.10.2-bin.zip
+..........................................................................
+
+Welcome to Gradle 4.10.2!
+
+Here are the highlights of this release:
+ - Incremental Java compilation by default
+ - Periodic Gradle caches cleanup
+ - Gradle Kotlin DSL 1.0-RC6
+ - Nested included builds
+ - SNAPSHOT plugin versions in the `plugins {}` block
+
+For more details see https://docs.gradle.org/4.10.2/release-notes.html
+
+Starting a Gradle Daemon (subsequent builds will be faster)
+> Task :compileJava
+> Task :processResources
+> Task :classes
+> Task :compileTestJava
+> Task :processTestResources
+> Task :testClasses
+> Task :smokeTest
+
+BUILD SUCCESSFUL in 32s
+5 actionable tasks: 5 executed
+[Pipeline] publishHTML
+[htmlpublisher] Archiving HTML reports...
+[htmlpublisher] Archiving at PROJECT level /home/jenkins/agent/workspace/wk9-part2/week8/Chapter09/sample3/build/reports/tests/smokeTest to /var/jenkins_home/jobs/wk9-part2/htmlreports/Smoke_20Test_20Report
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // container
+[Pipeline] container
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (deploy to gke)
+[Pipeline] sh
++ cd /home/jenkins/agent/workspace/wk9-part2/week9
++ gcloud auth login --cred-file=/var/secrets/google/umls24-109ffb3a5ab9.json
+
+Authenticated with service account credentials for: [jenkins@umls24.iam.gserviceaccount.com].
+Your current project is [None].  You can change this setting by running:
+  $ gcloud config set project PROJECT_ID
++ gcloud container clusters get-credentials hello-cluster --region us-west1 --project umls24
+Fetching cluster endpoint and auth data.
+kubeconfig entry generated for hello-cluster.
++ kubectl apply -f hazelcast.yaml -n default
+Warning: Autopilot set default resource requests for Deployment default/hazelcast, as resource requests were not specified. See http://g.co/gke/autopilot-defaults
+deployment.apps/hazelcast created
+service/hazelcast created
++ kubectl apply -f calc.yaml -n default
+Warning: Autopilot set default resource requests for Deployment default/calculator-deployment, as resource requests were not specified. See http://g.co/gke/autopilot-defaults
+deployment.apps/calculator-deployment created
+service/calculator-service unchanged
++ sleep 20
++ kubectl set image deployment/calculator-deployment calculator=dlambrig/week8:1.1 -n default
++ sleep 20
++ kubectl get pods -n default
+NAME                                     READY   STATUS    RESTARTS   AGE
+calculator-deployment-86dc79dccd-nfszc   1/1     Running   0          41s
+hazelcast-8688cb68ff-6thxf               1/1     Running   0          42s
++ kubectl get svc -n default
+NAME                 TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
+calculator-service   NodePort    10.104.2.124   <none>        8080:30458/TCP   9m25s
+hazelcast            ClusterIP   10.104.0.140   <none>        5701/TCP         42s
+kubernetes           ClusterIP   10.104.0.1     <none>        443/TCP          2m37s
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // container
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] }
+[Pipeline] // podTemplate
+[Pipeline] End of Pipeline
+[Checks API] No suitable checks publisher found.
+Finished: SUCCESS
+

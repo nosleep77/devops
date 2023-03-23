@@ -4,8 +4,6 @@ def testPassed = true
 podTemplate(yaml: '''
     apiVersion: v1
     kind: Pod
-    metadata:
-      name: gke-sdk
     spec:
       containers:
       - name: gradle
