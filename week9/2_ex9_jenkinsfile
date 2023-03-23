@@ -1,0 +1,99 @@
+
+def testPassed = true
+
+podTemplate(yaml: '''
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: gke-sdk
+    spec:
+      containers:
+      - name: gradle
+        image: gradle:jdk8
+        command:
+        - sleep
+        args:
+        - 99d
+        volumeMounts:
+        - name: shared-storage
+          mountPath: /mnt
+
+      - name: cloud-sdk
+        image: google/cloud-sdk
+        command:
+        - sleep
+        args:
+        - 99d
+        volumeMounts:
+        - name: shared-storage
+          mountPath: /mnt
+        - name: google-cloud-key
+          mountPath: /var/secrets/google
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/secrets/google/umls24-109ffb3a5ab9.json
+
+      restartPolicy: Never
+      volumes:
+      - name: shared-storage
+        persistentVolumeClaim:
+          claimName: jenkins-pv-claim3
+      - name: google-cloud-key
+        secret:
+          secretName: sdk-key
+
+''') {
+
+node(POD_LABEL) {
+  stage('test staging and deploy to gke') {
+    git branch: 'main', url: 'https://github.com/nosleep77/devops'
+
+  try {
+    container('gradle') {
+    stage('smoke test staging env') {
+    sh '''
+    cd $WORKSPACE/week8/Chapter09/sample3
+    chmod +x ./gradlew
+
+    ./gradlew smokeTest -Dcalculator.url=http://calculator-service.staging.svc.cluster.local:8080
+
+    '''
+         publishHTML(target: [
+           reportDir: "$WORKSPACE/week8/Chapter09/sample3/build/reports/tests/smokeTest",
+           reportFiles: 'index.html',
+           reportName: 'Smoke Test Report'
+           ])
+        }
+       }
+     } catch (Exception e){
+        testPassed = false
+     }
+
+
+    if (testPassed)  {
+    container('cloud-sdk') {
+      stage('deploy to gke') {
+        sh '''
+        cd $WORKSPACE/week9
+        gcloud auth login --cred-file=$GOOGLE_APPLICATION_CREDENTIALS
+        gcloud container clusters get-credentials hello-cluster --region us-west1 --project umls24
+
+	      ## deploy hazelcast and calculator
+        kubectl apply -f hazelcast.yaml -n default
+        kubectl apply -f calculator.yaml -n default
+        sleep 20
+
+        kubectl set image deployment/calculator-deployment calculator=dlambrig/week8:1.1 -n default
+        sleep 20
+
+        kubectl get pods -n default
+        kubectl get svc -n default
+
+        '''
+      }
+     }
+    }
+
+}  }  }
+
+
