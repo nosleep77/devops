@@ -80,7 +80,7 @@ node(POD_LABEL) {
 
 	      ## deploy hazelcast and calculator
         kubectl apply -f hazelcast.yaml -n default
-        kubectl apply -f calculator.yaml -n default
+        kubectl apply -f calc.yaml -n default
         sleep 20
 
         kubectl set image deployment/calculator-deployment calculator=dlambrig/week8:1.1 -n default
