@@ -1,0 +1,32 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  annotations:
+    meta.helm.sh/release-name: kube-prometheus-stack-1680053850
+    meta.helm.sh/release-namespace: prometheus
+  labels:
+    app: kube-prometheus-stack
+    release: kube-prometheus-stack-1680053850
+    app.kubernetes.io/instance: kube-prometheus-stack-1680053850
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: kube-prometheus-stack
+    app.kubernetes.io/version: 45.8.0
+    chart: kube-prometheus-stack-45.8.0
+    heritage: Helm
+  name: example-rule
+  namespace: prometheus
+spec:
+  groups:
+  - name: example-rule
+    rules:
+    - alert: example-alert
+      annotations:
+        description: Memory on node {{ $labels.instance }} currently at {{ $value }}% is under pressure
+        summary: Memory usage is under pressure, system may become unstable.
+      expr: >
+        100 - ((node_memory_MemAvailable_bytes{job="node-exporter"} * 100) / 
+        node_memory_MemTotal_bytes{job="node-exporter"}) > 10
+      for: 2m
+      labels:
+        severity: warning
+
