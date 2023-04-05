@@ -1,0 +1,31 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  annotations:
+    meta.helm.sh/release-name: kube-prometheus-stack-1680053850
+    meta.helm.sh/release-namespace: prometheus
+  labels:
+    app: kube-prometheus-stack
+    release: kube-prometheus-stack-1680053850
+    app.kubernetes.io/instance: kube-prometheus-stack-1680053850
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: kube-prometheus-stack
+    app.kubernetes.io/version: 45.8.0
+    chart: kube-prometheus-stack-45.8.0
+    heritage: Helm
+  name: mongodb-connections
+  namespace: prometheus
+spec:
+  groups:
+  - name: mongodb_connections
+    rules:
+    - alert: mongodb_connections
+      annotations:
+        summary: MongoDB has more than 2 connections
+        description: MongoDB on node {{ $labels.instance }} has more than 2 connections. Currently {{ $value }} connections.
+      expr: mongodb_ss_connections{conn_type="active"} > 2
+      for: 1m
+      labels:
+        severity: critical
+        app: mongodb
+
