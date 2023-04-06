@@ -24,7 +24,7 @@ spec:
         summary: MongoDB has more than 2 connections
         description: MongoDB on node {{ $labels.instance }} has more than 2 connections. Currently {{ $value }} connections.
       expr: mongodb_ss_connections{conn_type="active"} > 2
-      for: 1m
+      for: 3m
       labels:
         severity: critical
         app: mongodb
