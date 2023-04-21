@@ -1,6 +1,7 @@
 import pymysql
 import csv
 import configparser
+import os
 
 parser = configparser.ConfigParser()
 parser.read("pipeline.conf")
@@ -22,7 +23,7 @@ else:
   print("MySQL connection established!")
 
   m_query = "SELECT * FROM Orders;"
-local_filename = "order_extract.csv"
+local_filename = "week13-fjamsh.csv"
 
 m_cursor = conn.cursor()
 m_cursor.execute(m_query)
@@ -36,3 +37,7 @@ fp.close()
 m_cursor.close()
 conn.close()
 
+
+print("Contents of '/root/mount_file/':")
+for file in os.listdir('/root/mount_file/'):
+    print(file)
